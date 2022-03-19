@@ -1,0 +1,5 @@
+pane	tmux	1	1	:*	1	:/Users/jagddish	1	nvim	:nvim .tmux.conf
+pane	vim	1	1	:*	1	:/Users/jagddish	1	nvim	:nvim /Users/jagddish/.config/nvim/init.vim
+window	tmux	1	:	1	:*	b25e,80x24,0,0,1	:
+window	vim	1	:	1	:*	b25f,80x24,0,0,2	:
+state	vim	
