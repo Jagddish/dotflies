@@ -1,1 +1,55 @@
-This is a test  > CTRL + w 
+**----Vim*remaps----**
+
+<leader> k      -Open hotkeys file
+
+>>--Terminal--<<
+<C-\>           -Toggle Terminal
+
+>>--Vim-Jumping-plits--<<
+<C-k>
+<C-j>
+<C-h>
+<C-l>
+
+>>--Change-Splits-vert-horiz--<<
+<Leader>th      -Vertical
+<leader>tk      -Horizantal
+<C-w-=>         -Resize all splits
+
+<vv>            -Makes Vertical Splits
+<ss>            -Makes horizontal splits
+<Q>             -Quit
+
+<C-o>           -Goyo toggle
+
+>>--Telescope--<<
+<C-p>                  -find files
+<leader>ff>            -live grep
+<leader>fh>            -find files hidden
+<leader>fg>            -git files
+<leader>fb>            -Buffers
+---results----
+C-n>            -up
+C-p>            -down
+
+--preview---
+C-u
+C-d
+
+--open file--
+C-v         -vsplit
+C-x         -Hsplit
+
+
+
+>>--NerdTree--<<
+<C-n>               -NerdTree Toggle
+
+>>--Snippets--<<
+<leader>h>          -Snippets Editor
+<S-tab>             -activate snippet
+
+>>--Buffers--<<
+<leader> 1          -Previous Buffer
+<leader> 2          -Next Buffer
+<leader> 3          -Close Buffer

@@ -101,7 +101,10 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias python=python3
 alias del='rm -rf'
+alias vi='vim -o `fzf`'
 alias vim=nvim
+alias v=nvim
+alias vm=nvim
 alias ta='tmux attach'
 alias t=tmux
 alias tls='tmux ls'
@@ -111,6 +114,9 @@ alias e=exit
 alias l='ls -la'
 alias c=clear
 alias ..='cd ..'
+alias work='~/codes'
+alias desk='~/Desktop'
+alias pb='open ~/Books/Python/'
 # reload zsh config
 alias reload='RELOAD=1 source ~/.zshrc'
 alias vf='vim ~/.config/nvim/init.vim'
@@ -125,3 +131,4 @@ alias mux='pgrep -vx tmux > /dev/null && \
 
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+

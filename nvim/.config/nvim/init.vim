@@ -5,6 +5,7 @@ set relativenumber
 set tabstop=4
 set shiftwidth=4
 set smarttab
+set nocompatible
 set expandtab
 set autoindent
 set encoding=UTF-8
@@ -43,15 +44,22 @@ let &showbreak='↳ '
 
 
 syntax enable
+set splitbelow "splitright    "open new splits below if horizontal and right if vertical
+
+" Exit vim close vim
+map Q  <C-W>q
+nnoremap <C-q> :q <CR>
+
 
 
 let g:ale_disable_lsp = 1
 call plug#begin('~/.config/nvim/plugged')
 " Plug 'preservim/tagbar'  			"Tagbar for code navigation
-Plug 'SirVer/ultisnips' 			"Snippets
-Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips' 			"Snippets
+" Plug 'honza/vim-snippets'
+Plug 'L3MON4D3/LuaSnip'
 Plug 'tpope/vim-surround' 			"Use ysw [,
-Plug 'psf/black', { 'branch': 'stable' } "Black formatter
+" Plug 'psf/black', { 'branch': 'stable' } "Black formatter
 Plug 'preservim/nerdtree' 			" NerdTree
 Plug 'tpope/vim-commentary' 		" For Commenting gcc & gc
 Plug 'vim-airline/vim-airline' 		" Status bar
@@ -61,22 +69,36 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'} " Auto Completion
 Plug 'akinsho/toggleterm.nvim' 		"Terminal
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'tpope/vim-fugitive' 			"Git
-Plug 'vim-python/python-syntax'                    " Python highlighting
+Plug 'sheerun/vim-polyglot'
 Plug 'junegunn/goyo.vim'                           " Distraction-free viewing
 Plug 'ayu-theme/ayu-vim'
-Plug 'nvim-lua/plenary.nvim' 		"Telescope 
+" Telescope
+Plug 'nvim-lua/plenary.nvim' 		"Telescope
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'dense-analysis/ale'
+Plug 'BurntSushi/ripgrep'       "Telescope
+Plug 'sharkdp/fd'               "Telescope
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+
+Plug 'dense-analysis/ale'           "Ale
 Plug 'EdenEast/nightfox.nvim' 		"Colorscheme
-Plug 'overcache/NeoSolarized'       "Colorscheme 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'vim-scripts/rotate.vim'
-Plug 'patstockwell/vim-monokai-tasty'
+Plug 'patstockwell/vim-monokai-tasty' "Colorscheme
+Plug 'morhetz/gruvbox'
 call plug#end()
 "----------------------------------------------------------------------
 lua << EOF
-require('telescope').setup{}
-
+require('telescope').setup{defaults = { file_ignore_patterns = {".npm",".local",".oh-my-zsh",".tmux",".viminfo",".yarn","Public","Pictures","Library","Applications","Books","Obsidian"}},extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = true,  -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                       -- the default case_mode is "smart_case"
+    }
+  }
+  }
+-- require('telescope').load_extension('fzy_native')
+require('telescope').load_extension('fzf')
 
 ---terminal
 require"toggleterm".setup {
@@ -119,25 +141,57 @@ EOF
 
 
 
-"--------Colorschemes 
+"--------Colorschemes
 
-" let ayucolor="light"  " for light version of theme
-" let ayucolor="mirage" " for mirage version of theme
+let ayucolor="mirage" " for mirage version of theme
 " let ayucolor="dark"
-" colorscheme ayu
+colorscheme ayu
 
 "----------******--------
 " colorscheme duskfox
-colorscheme nightfox
+" colorscheme nightfox
 " colorscheme vim-monokai-tasty
+" let g:airline_theme='monokai_tasty'
+"
+"hard , medium , soft
+" let g:gruvbox_contrast_dark = 'medium'
+" colorscheme gruvbox
+
+" below line code makes vim transparent
+" hi Normal guibg=NONE ctermbg=NONE
+
+" If u want to use toggle for transparent use below code
+" let t:is_transparent = 0
+" function! Toggle_transparent()
+"     if t:is_transparent == 0
+"         hi Normal guibg=NONE ctermbg=NONE
+"         let t:is_transparent = 1
+"     else
+"         set background=dark
+"         let t:is_transparent = 0
+"     endif
+" endfunction
+" nnoremap <C-t> : call Toggle_transparent()<CR>
+
 "--------------------------------***********-------------
+
 " Mapping or remaps
 
 let mapleader = " " "space
 
 "Keyboard shortcuts
-nmap <leader>k :vsplit ~/.config/nvim/hotkeys<cr>
+" nmap <leader>mi :vsplit ~/.config/nvim/hotkeys<cr>
+nmap <leader>k :vsplit ~/.config/nvim/init.vim<cr>
 
+nnoremap ; :
+vnoremap ; :
+nmap <leader>[ ysiw
+
+"So I can move around in insert
+inoremap <C-k> <C-o>gk
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
+inoremap <C-j> <C-o>gj
 
 " Quick jumping between splits
 map <C-j> <C-w>j
@@ -154,32 +208,41 @@ map <Leader>tk <C-w>t<C-w>K
 map vv <C-W>v
 " ss - Makes horizontal split
 map ss <C-W>s
-" Shift + q - Quit
-map Q  <C-W>q
+"
 
-" nnoremap <Leader>l :noh<CR>
 nnoremap <leader><leader><CR> :so ~/.config/nvim/init.vim<CR>
-nnoremap <C-q> :q! <CR> "CTRL + q
-nnoremap <leader><CR> :w <CR>
+nnoremap <leader><CR> :up <CR>
 nnoremap <C-o> :Goyo <CR>
 " let g:goyo_width = 90
 let g:goyo_height = 90
 
-" Telescope 
+
+"Automagically resize splits when the host is resized
+autocmd VimResized * wincmd =
+
+"Make backspace delete in normal
+nnoremap <BS>    <BS>x
+xnoremap <BS>    x
+
+
+"Make visual selection more visible
+hi visual term=reverse cterm=reverse guibg=darkGray
+
+" Telescope
 nnoremap <C-p> <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').find_files({hidden = true})<cr>
-nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
+" nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').git_files()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 
-set splitbelow "splitright    "open new splits below if horizontal and right if vertical
 " map <Leader>th <C-w>t<C-w>H
 " map <Leader>tk <C-w>t<C-w>K
 
 
 
 
-"Tagbar 
+"Tagbar
 " nnoremap <C-[> :TagbarToggle<CR>
 
 
@@ -201,11 +264,17 @@ let g:NerdTreeMinimalUI=1
 
 
 "Snippets
+"The b is the option for when to trigger completion:
+" b only triggers if the keyword is at the start of the line.
+" i trigers it inline
+" A triggers automatically
 let g:UltiSnipsEditSplit="vertical"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsExpandTrigger="<S-Tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-nnoremap <leader>h :UltiSnipsEdit<CR>
+let g:UltiSnipsJumpForwardTrigger="<c-i>"
+let g:UltiSnipsExpandTrigger="<C-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-u>"
+nnoremap <leader>mk :UltiSnipsEdit<CR>
+
+
 
 let g:python3_host_prog = expand('/Library/Frameworks/Python.framework/Versions/3.10/bin/python3')
 let g:python_highlight_all = 1
@@ -215,9 +284,11 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#tabline#fnamemode=':t'
+
+" Buffers
 nnoremap <leader>1 :bp<CR>
 nnoremap <leader>2 :bn<CR>
-nnoremap <leader>3 :bd<CR>
+nnoremap <leader>e :bd<CR>
 
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -234,22 +305,23 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = '|'
 let g:airline_symbols.maxlinenr = '|'
 let g:airline_theme='lucius'
-" let g:airline_theme='monokai_tasty'
 
 let g:ale_sign_error = '>>'
+let g:ale_linters = {'python':['flake8']}
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],'python': ['black','isort']}
+let g:ale_fix_on_save = 1
 
-autocmd BufWritePre *.py execute ':Black'
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " --------------coc.vim------------------------
- inoremap <silent><expr> <TAB>
-       \ pumvisible() ? "\<C-n>" :
-       \ <SID>check_back_space() ? "\<TAB>" :
-       \ coc#refresh()
- inoremap <expr><C-S> pumvisible() ? "\<C-p>" : "\<C-h>"
+ " inoremap <silent><expr> <TAB>
+ "       \ pumvisible() ? "\<C-n>" :
+ "       \ <SID>check_back_space() ? "\<TAB>" :
+ "       \ coc#refresh()
+ " inoremap <expr><C-S> pumvisible() ? "\<C-p>" : "\<C-h>"
 
- function! s:check_back_space() abort
-   let col = col('.') - 1
-   return !col || getline('.')[col - 1]  =~# '\s'
- endfunction
+ " function! s:check_back_space() abort
+ "   let col = col('.') - 1
+ "   return !col || getline('.')[col - 1]  =~# '\s'
+ " endfunction
 " --------------coc.vim----------------------------
-
